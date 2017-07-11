@@ -66,11 +66,7 @@ class Trip extends React.Component {
         {nodes}
         <Adder onClick={() => this.insertNode(this.state.nodes.length)}/>
       </div>
-
     );
-  }
-
-  componentDidMount() {
   }
 
   insertNode(i) {
