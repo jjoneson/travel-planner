@@ -139,7 +139,7 @@ export class Node extends React.Component {
         {this.renderHeaderWrite()}
         <Row>
           {
-            this.renderFieldset("Location Name:", 6,
+            this.renderFieldset("Location Type:", 6,
               this.renderLocationTypeSelect("locationType", this.state.locationType))
           }
           {

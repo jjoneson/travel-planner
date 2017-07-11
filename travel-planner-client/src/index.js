@@ -4,13 +4,33 @@ import "./site.css";
 import $ from "jquery";
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import {Node} from "./Node.js";
-import {Button, Col, Grid, Row} from "react-bootstrap";
+import {Button, Col, ControlLabel, FormControl, FormGroup, Grid, Navbar, Row} from "react-bootstrap";
 window.jQuery = $;
 window.$ = $;
 global.jQuery = $;
 
 global.UP = "up";
 global.DOWN = "down";
+
+const navbar = (
+  <Navbar inverse collapseOnSelect>
+    <Navbar.Header>
+      <Navbar.Brand>
+        <a href="#">Travel Planner</a>
+      </Navbar.Brand>
+      <Navbar.Toggle/>
+    </Navbar.Header>
+    <Navbar.Collapse>
+      <Navbar.Form pullLeft>
+        <FormGroup>
+          <FormControl type="text" placeholder="Load Trip"/>
+        </FormGroup>
+        {' '}
+        <Button type="submit">Load</Button>
+      </Navbar.Form>
+    </Navbar.Collapse>
+  </Navbar>
+);
 
 
 class Trip extends React.Component {
@@ -40,6 +60,8 @@ class Trip extends React.Component {
       }, this);
     return (
       <div>
+        {navbar}
+        <Namer/>
         {nodes}
         <Adder onClick={this.addNewNode.bind(this)}/>
       </div>
@@ -111,6 +133,25 @@ class Trip extends React.Component {
   }
 }
 
+function Namer(props) {
+  return (
+    <Grid className="namer">
+      <Row>
+        <Col sm={4} smPush={4} className="node node-read">
+          <form>
+            <FormGroup controlId="formControlsTripName">
+              <ControlLabel>Trip Name</ControlLabel>
+              <FormControl type="text" placeholder="Trip name"/>
+            </FormGroup>
+            <Button type="submit" bsStyle="default" block onClick={props.onClick}>
+              Name Trip
+            </Button>
+          </form>
+        </Col>
+      </Row>
+    </Grid>
+  );
+}
 
 function Adder(props) {
   return (
@@ -141,6 +182,7 @@ function addDays(date, days) {
 }
 
 // ========================================
+
 
 ReactDOM
   .render(
