@@ -1,0 +1,26 @@
+.header-row {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.node {
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid #eee;
+    padding: 10px;
+    background-color: rgba(228, 225, 210, 0.29);
+}
+
+.node-read {
+    box-shadow: 5px 5px 5px 1px #999;
+}
+
+.node-write {
+    box-shadow: 2px 2px 2px 1px #999 inset;
+}
+
+.btn-move {
+    height: auto;
+    width: auto;
+    padding: 0;
+}
