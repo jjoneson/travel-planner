@@ -45,11 +45,12 @@ class Trip extends React.Component {
     const nodes = this.state.nodes
       .map(function (node, i) {
         const prev = this.state.nodes[i - 1];
-        node.arrival = prev && prev.departure ? prev.departure : node.arrival;
-        node.date = prev && prev.date ? overnight(prev) ? addDays(prev.date, 1) : prev.date : node.date;
+        node.data.arrival = prev && prev.data.departure ? prev.data.departure : node.data.arrival
+        node.data.date = prev && prev.data.date ? overnight(prev) ? addDays(prev.date, 1) : prev.date : node.date
         return <div key={i}>
           <Destination
-            data={node}
+            data={node.data}
+            edit={node.edit}
             save={(data, i) => this.saveDestination(data, i)}
             move={(direction, i) => this.moveNode(direction, i)}
             insertNode={(i) => this.insertNode(i)}
@@ -77,8 +78,10 @@ class Trip extends React.Component {
     const newNodes = this.state.nodes.slice();
     const prev = newNodes[i - 1];
     newNodes.splice(i + 1, 0, {
-      date: prev && prev.date ? overnight(prev) ? addDays(prev.date, 1) : prev.date : new Date().toJSON().slice(0, 10),
-      arrival: prev && prev.departure ? prev.departure : "12:00",
+      data: {
+        date: prev && prev.data.date ? overnight(prev) ? addDays(prev.data.date, 1) : prev.data.date : new Date().toJSON().slice(0, 10),
+        arrival: prev && prev.data.departure ? prev.data.departure : "12:00",
+      },
       edit: true
     });
     this.setState({
@@ -90,8 +93,10 @@ class Trip extends React.Component {
     const newNodes = this.state.nodes.slice();
     const prev = newNodes[newNodes.length - 1];
     newNodes.push({
-      date: prev && prev.date ? overnight(prev) ? addDays(prev.date, 1) : prev.date : new Date().toJSON().slice(0, 10),
-      arrival: prev && prev.departure ? prev.departure : "12:00",
+      data: {
+        date: prev && prev.data.date ? overnight(prev) ? addDays(prev.data.date, 1) : prev.data.date : new Date().toJSON().slice(0, 10),
+        arrival: prev && prev.data.departure ? prev.data.departure : "12:00",
+      },
       edit: true
     });
     this.setState({
@@ -106,16 +111,16 @@ class Trip extends React.Component {
       return;
     }
     const c = newNodes[i];
-    const c_arrival = c.arrival;
-    const c_departure = c.departure;
-    const o_arrival = newNodes[j].arrival;
-    const o_departure = newNodes[j].departure;
+    const c_arrival = c.data.arrival
+    const c_departure = c.data.departure
+    const o_arrival = newNodes[j].data.arrival
+    const o_departure = newNodes[j].data.departure
     newNodes[i] = newNodes[j];
     newNodes[j] = c;
-    newNodes[i].arrival = c_arrival;
-    newNodes[i].departure = c_departure;
-    newNodes[j].arrival = o_arrival;
-    newNodes[j].departure = o_departure;
+    newNodes[i].data.arrival = c_arrival
+    newNodes[i].data.departure = c_departure
+    newNodes[j].data.arrival = o_arrival
+    newNodes[j].data.departure = o_departure
     this.setState({nodes: newNodes});
   }
 
@@ -125,9 +130,9 @@ class Trip extends React.Component {
     this.setState({nodes: newNodes});
   }
 
-  saveDestination(data, i) {
+  saveDestination(node, i) {
     const newNodes = this.state.nodes.slice();
-    newNodes[i] = data;
+    newNodes[i] = node
     newNodes.splice(i, 1, newNodes[i]);
     this.setState({nodes: newNodes});
   }
@@ -170,9 +175,9 @@ function Adder(props) {
 function overnight(prev) {
   return (
   prev &&
-  prev.arrival &&
-  prev.departure &&
-  prev.arrival.slice(0, 2) > prev.departure.slice(0, 2));
+  prev.data.arrival &&
+  prev.data.departure &&
+  prev.data.arrival.slice(0, 2) > prev.data.departure.slice(0, 2));
 }
 
 function addDays(date, days) {
