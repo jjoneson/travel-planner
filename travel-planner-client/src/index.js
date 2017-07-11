@@ -1,10 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import "./site.css";
-import $ from "jquery";
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import {Node} from "./Node.js";
-import {Button, Col, ControlLabel, FormControl, FormGroup, Grid, Navbar, Row} from "react-bootstrap";
+import React from "react"
+import ReactDOM from "react-dom"
+import "./site.css"
+import $ from "jquery"
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
+import {Button, Col, ControlLabel, FormControl, FormGroup, Grid, Navbar, Row} from "react-bootstrap"
+import {Destination} from "./trip/Destination"
 window.jQuery = $;
 window.$ = $;
 global.jQuery = $;
@@ -48,12 +48,12 @@ class Trip extends React.Component {
         node.arrival = prev && prev.departure ? prev.departure : node.arrival;
         node.date = prev && prev.date ? overnight(prev) ? addDays(prev.date, 1) : prev.date : node.date;
         return <div key={i}>
-          <Node
+          <Destination
             data={node}
-            save={(data, i) => this.saveNode(data, i)}
+            save={(data, i) => this.saveDestination(data, i)}
             move={(direction, i) => this.moveNode(direction, i)}
             insertNode={(i) => this.insertNode(i)}
-            delete={this.deleteNode.bind(this, i)}
+            delete={this.deleteDestination.bind(this, i)}
             index={i}
           />
         </div>;
@@ -119,13 +119,13 @@ class Trip extends React.Component {
     this.setState({nodes: newNodes});
   }
 
-  deleteNode(i) {
+  deleteDestination(i) {
     const newNodes = this.state.nodes.slice();
     newNodes.splice(i, 1);
     this.setState({nodes: newNodes});
   }
 
-  saveNode(data, i) {
+  saveDestination(data, i) {
     const newNodes = this.state.nodes.slice();
     newNodes[i] = data;
     newNodes.splice(i, 1, newNodes[i]);
