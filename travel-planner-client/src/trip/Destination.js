@@ -8,8 +8,8 @@ import {DestinationFieldSet} from "./DestinationFieldSet"
 
 export class Destination extends React.Component {
   state = {
-    edit: true,
-    data: this.props.data
+    data: this.props.data,
+    edit: this.props.edit
   }
 
 
@@ -53,7 +53,8 @@ export class Destination extends React.Component {
   }
 
   save() {
-    this.props.save({data: this.state.data, edit: !this.props.edit,},
+    this.setState({edit: false})
+    this.props.save({data: this.state.data, edit: false},
       this.props.index)
   }
 

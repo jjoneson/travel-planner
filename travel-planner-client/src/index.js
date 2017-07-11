@@ -78,10 +78,15 @@ class Trip extends React.Component {
         date: prev && prev.data.date ? overnight(prev) ? addDays(prev.data.date, 1) : prev.data.date : new Date().toJSON().slice(0, 10),
         arrival: prev && prev.data.departure ? prev.data.departure : "12:00",
         locationType: "City",
-        departure: prev && prev.data.departure ? prev.data.departure : "12:00",
+        departure: prev && prev.data.departure ? prev.data.departure : "13:00",
       },
       edit: true
     });
+
+    for (let j = 0; j < newNodes.count; j++) {
+      newNodes[j].index = j
+    }
+
     this.setState({
       nodes: newNodes
     });
