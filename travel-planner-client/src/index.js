@@ -46,7 +46,7 @@ class Trip extends React.Component {
       .map(function (node, i) {
         const prev = this.state.nodes[i - 1];
         node.data.arrival = prev && prev.data.departure ? prev.data.departure : node.data.arrival
-        node.data.date = prev && prev.data.date ? overnight(prev) ? addDays(prev.date, 1) : prev.date : node.date
+        node.data.date = prev && prev.data.date ? overnight(prev) ? addDays(prev.date, 1) : prev.data.date : node.data.date
         return <div key={i}>
           <Destination
             data={node.data}
@@ -64,38 +64,25 @@ class Trip extends React.Component {
         {navbar}
         <Namer/>
         {nodes}
-        <Adder onClick={this.addNewNode.bind(this)}/>
+        <Adder onClick={() => this.insertNode(this.state.nodes.length)}/>
       </div>
 
     );
   }
 
   componentDidMount() {
-    this.addNewNode();
   }
 
   insertNode(i) {
-    const newNodes = this.state.nodes.slice();
-    const prev = newNodes[i - 1];
-    newNodes.splice(i + 1, 0, {
+    let insertLoc = i === this.state.nodes.length ? this.state.nodes.length : i + 1
+    const newNodes = this.state.nodes.slice()
+    const prev = newNodes[i - 1]
+    newNodes.splice(insertLoc, 0, {
       data: {
         date: prev && prev.data.date ? overnight(prev) ? addDays(prev.data.date, 1) : prev.data.date : new Date().toJSON().slice(0, 10),
         arrival: prev && prev.data.departure ? prev.data.departure : "12:00",
-      },
-      edit: true
-    });
-    this.setState({
-      nodes: newNodes
-    });
-  }
-
-  addNewNode() {
-    const newNodes = this.state.nodes.slice();
-    const prev = newNodes[newNodes.length - 1];
-    newNodes.push({
-      data: {
-        date: prev && prev.data.date ? overnight(prev) ? addDays(prev.data.date, 1) : prev.data.date : new Date().toJSON().slice(0, 10),
-        arrival: prev && prev.data.departure ? prev.data.departure : "12:00",
+        locationType: "City",
+        departure: prev && prev.data.departure ? prev.data.departure : "12:00",
       },
       edit: true
     });

@@ -4,8 +4,7 @@ import {DestinationField} from "./DestinationField"
 
 export class DestinationFieldSet extends React.Component {
   render() {
-    const validationState = this.props.edit ? this.props.validationState : () => {
-    }
+    const validationState = this.props.edit ? this.props.validationState : null
     return (
       <Col sm={this.props.width} smPush={this.props.push} smPull={this.props.pull}>
         <FormGroup validationState={validationState}>
