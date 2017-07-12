@@ -10,7 +10,6 @@ export class DestinationField extends React.Component {
     }
 
     if (this.props.select) {
-
       const options = this.props.options.map(function (option) {
         return <option key={option}>{option}</option>
       })

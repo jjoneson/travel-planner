@@ -12,27 +12,6 @@ global.jQuery = $
 global.UP = "up"
 global.DOWN = "down"
 
-const navbar = (
-  <Navbar inverse collapseOnSelect>
-    <Navbar.Header>
-      <Navbar.Brand>
-        <a href="#">Travel Planner</a>
-      </Navbar.Brand>
-      <Navbar.Toggle/>
-    </Navbar.Header>
-    <Navbar.Collapse>
-      <Navbar.Form pullLeft>
-        <FormGroup>
-          <FormControl type="text" placeholder="Load Trip"/>
-        </FormGroup>
-        {' '}
-        <Button type="submit">Load</Button>
-      </Navbar.Form>
-    </Navbar.Collapse>
-  </Navbar>
-)
-
-
 class Trip extends React.Component {
   constructor() {
     super()
@@ -45,11 +24,11 @@ class Trip extends React.Component {
     const nodes = this.state.nodes
       .map(function (node, i) {
         const prev = this.state.nodes[i - 1]
-        node.data.arrival = prev && prev.data.departure ? prev.data.departure : node.data.arrival
-        node.data.date = prev && prev.data.date ? overnight(prev) ? addDays(prev.date, 1) : prev.data.date : node.data.date
+        node.dest.arrival = prev && prev.dest.departure ? prev.dest.departure : node.dest.arrival
+        node.dest.date = prev && prev.dest.date ? overnight(prev) ? addDays(prev.date, 1) : prev.dest.date : node.dest.date
         return <div key={i}>
           <Destination
-            data={node.data}
+            dest={node.dest}
             edit={node.edit}
             save={(data, i) => this.saveDestination(data, i)}
             move={(direction, i) => this.moveNode(direction, i)}
@@ -61,12 +40,19 @@ class Trip extends React.Component {
       }, this)
     return (
       <div>
-        {navbar}
-        <Namer/>
+        <Topbar value={this.state.searchCriteria} onSubmit={this.loadTrip} onChange={this.handleSearchChange}/>
+        <Namer value={this.state.name} onSubmit={this.saveTrip} onChange={this.handleNameChange}/>
         {nodes}
         <Adder onClick={() => this.insertNode(this.state.nodes.length)}/>
       </div>
     )
+  }
+
+  handleSearchChange = (e) => {
+    this.setState({searchCriteria: e.target.value})
+  }
+  handleNameChange = (e) => {
+    this.setState({name: e.target.value})
   }
 
   insertNode(i) {
@@ -74,11 +60,11 @@ class Trip extends React.Component {
     const newNodes = this.state.nodes.slice()
     const prev = newNodes[i - 1]
     newNodes.splice(insertLoc, 0, {
-      data: {
-        date: prev && prev.data.date ? overnight(prev) ? addDays(prev.data.date, 1) : prev.data.date : new Date().toJSON().slice(0, 10),
-        arrival: prev && prev.data.departure ? prev.data.departure : "12:00",
+      dest: {
+        date: prev && prev.dest.date ? overnight(prev) ? addDays(prev.dest.date, 1) : prev.dest.date : new Date().toJSON().slice(0, 10),
+        arrival: prev && prev.dest.departure ? prev.dest.departure : "12:00",
         locationType: "City",
-        departure: prev && prev.data.departure ? prev.data.departure : "13:00",
+        departure: prev && prev.dest.departure ? prev.dest.departure : "13:00",
       },
       edit: true
     })
@@ -100,8 +86,8 @@ class Trip extends React.Component {
     }
 
     [newNodes[i], newNodes[j]] = [newNodes[j], newNodes[i]];
-    [newNodes[i].data.arrival, newNodes[j].data.arrival] = [newNodes[j].data.arrival, newNodes[i].data.arrival];
-    [newNodes[i].data.departure, newNodes[j].data.departure] = [newNodes[j].data.departure, newNodes[i].data.departure]
+    [newNodes[i].dest.arrival, newNodes[j].dest.arrival] = [newNodes[j].dest.arrival, newNodes[i].dest.arrival];
+    [newNodes[i].dest.departure, newNodes[j].dest.departure] = [newNodes[j].dest.departure, newNodes[i].dest.departure]
 
     this.setState({nodes: newNodes})
   }
@@ -112,12 +98,62 @@ class Trip extends React.Component {
     this.setState({nodes: newNodes})
   }
 
+  loadTrip = (e) => {
+    $.get("https://travel-planner.io/api/load/" + e.target.value, function (data) {
+      const nodes = []
+      data.destinations.forEach(dest => nodes.push({dest: dest}))
+      this.setState({name: data.name, tripId: data.tripId, nodes: nodes})
+    })
+
+  }
+
+  saveTrip = (e) => {
+    if (e) e.preventDefault()
+    const payload = this.state.nodes.map(node => {
+      return node.dest
+    })
+
+    $.post("https://travel-planner.io/api/save",
+      {
+        trip: {
+          tripId: this.state.tripId,
+          'destinations[]': JSON.stringify(payload)
+        },
+        name: this.state.name
+      })
+      .done(function (data) {
+        this.setState({tripId: data.tripId})
+      })
+  }
+
   saveDestination(node, i) {
     const newNodes = this.state.nodes.slice()
     newNodes[i] = node
     newNodes.splice(i, 1, newNodes[i])
     this.setState({nodes: newNodes})
+    this.saveTrip()
   }
+}
+
+function Topbar(props) {
+  return (
+    <Navbar inverse collapseOnSelect>
+      <Navbar.Header>
+        <Navbar.Brand>
+          <a href="#">Travel Planner</a>
+        </Navbar.Brand>
+        <Navbar.Toggle/>
+      </Navbar.Header>
+      <Navbar.Collapse>
+        <Navbar.Form pullLeft>
+          <FormGroup>
+            <FormControl value={props.value} onChange={props.onChange} type="text" placeholder="Load Trip"/>
+          </FormGroup>
+          <Button onClick={props.onSubmit}>Load</Button>
+        </Navbar.Form>
+      </Navbar.Collapse>
+    </Navbar>
+  )
 }
 
 function Namer(props) {
@@ -125,12 +161,12 @@ function Namer(props) {
     <Grid className="namer">
       <Row>
         <Col sm={4} smPush={4} className="node node-read">
-          <form>
+          <form onSubmit={props.onSubmit}>
             <FormGroup controlId="formControlsTripName">
               <ControlLabel>Trip Name</ControlLabel>
-              <FormControl type="text" placeholder="Trip name"/>
+              <FormControl value={props.name} onChange={props.onChange} type="text" placeholder="Trip name"/>
             </FormGroup>
-            <Button type="submit" bsStyle="default" block onClick={props.onClick}>
+            <Button type="submit" bsStyle="default" block>
               Name Trip
             </Button>
           </form>
@@ -157,9 +193,9 @@ function Adder(props) {
 function overnight(prev) {
   return (
   prev &&
-  prev.data.arrival &&
-  prev.data.departure &&
-  prev.data.arrival.slice(0, 2) > prev.data.departure.slice(0, 2))
+  prev.dest.arrival &&
+  prev.dest.departure &&
+  prev.dest.arrival.slice(0, 2) > prev.dest.departure.slice(0, 2))
 }
 
 function addDays(date, days) {
