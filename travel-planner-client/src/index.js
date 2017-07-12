@@ -5,12 +5,12 @@ import $ from "jquery"
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import {Button, Col, ControlLabel, FormControl, FormGroup, Grid, Navbar, Row} from "react-bootstrap"
 import {Destination} from "./trip/Destination"
-window.jQuery = $;
-window.$ = $;
-global.jQuery = $;
+window.jQuery = $
+window.$ = $
+global.jQuery = $
 
-global.UP = "up";
-global.DOWN = "down";
+global.UP = "up"
+global.DOWN = "down"
 
 const navbar = (
   <Navbar inverse collapseOnSelect>
@@ -30,21 +30,21 @@ const navbar = (
       </Navbar.Form>
     </Navbar.Collapse>
   </Navbar>
-);
+)
 
 
 class Trip extends React.Component {
   constructor() {
-    super();
+    super()
     this.state = {
       nodes: [],
-    };
+    }
   }
 
   render() {
     const nodes = this.state.nodes
       .map(function (node, i) {
-        const prev = this.state.nodes[i - 1];
+        const prev = this.state.nodes[i - 1]
         node.data.arrival = prev && prev.data.departure ? prev.data.departure : node.data.arrival
         node.data.date = prev && prev.data.date ? overnight(prev) ? addDays(prev.date, 1) : prev.data.date : node.data.date
         return <div key={i}>
@@ -57,8 +57,8 @@ class Trip extends React.Component {
             delete={this.deleteDestination.bind(this, i)}
             index={i}
           />
-        </div>;
-      }, this);
+        </div>
+      }, this)
     return (
       <div>
         {navbar}
@@ -66,7 +66,7 @@ class Trip extends React.Component {
         {nodes}
         <Adder onClick={() => this.insertNode(this.state.nodes.length)}/>
       </div>
-    );
+    )
   }
 
   insertNode(i) {
@@ -81,7 +81,7 @@ class Trip extends React.Component {
         departure: prev && prev.data.departure ? prev.data.departure : "13:00",
       },
       edit: true
-    });
+    })
 
     for (let j = 0; j < newNodes.count; j++) {
       newNodes[j].index = j
@@ -89,40 +89,34 @@ class Trip extends React.Component {
 
     this.setState({
       nodes: newNodes
-    });
+    })
   }
 
   moveNode(direction, i) {
-    const newNodes = this.state.nodes.slice();
-    const j = direction === global.UP ? i - 1 : i + 1;
+    const newNodes = this.state.nodes.slice()
+    const j = direction === global.UP ? i - 1 : i + 1
     if (!newNodes[j]) {
-      return;
+      return
     }
-    const c = newNodes[i];
-    const c_arrival = c.data.arrival
-    const c_departure = c.data.departure
-    const o_arrival = newNodes[j].data.arrival
-    const o_departure = newNodes[j].data.departure
-    newNodes[i] = newNodes[j];
-    newNodes[j] = c;
-    newNodes[i].data.arrival = c_arrival
-    newNodes[i].data.departure = c_departure
-    newNodes[j].data.arrival = o_arrival
-    newNodes[j].data.departure = o_departure
-    this.setState({nodes: newNodes});
+
+    [newNodes[i], newNodes[j]] = [newNodes[j], newNodes[i]];
+    [newNodes[i].data.arrival, newNodes[j].data.arrival] = [newNodes[j].data.arrival, newNodes[i].data.arrival];
+    [newNodes[i].data.departure, newNodes[j].data.departure] = [newNodes[j].data.departure, newNodes[i].data.departure]
+
+    this.setState({nodes: newNodes})
   }
 
   deleteDestination(i) {
-    const newNodes = this.state.nodes.slice();
-    newNodes.splice(i, 1);
-    this.setState({nodes: newNodes});
+    const newNodes = this.state.nodes.slice()
+    newNodes.splice(i, 1)
+    this.setState({nodes: newNodes})
   }
 
   saveDestination(node, i) {
-    const newNodes = this.state.nodes.slice();
+    const newNodes = this.state.nodes.slice()
     newNodes[i] = node
-    newNodes.splice(i, 1, newNodes[i]);
-    this.setState({nodes: newNodes});
+    newNodes.splice(i, 1, newNodes[i])
+    this.setState({nodes: newNodes})
   }
 }
 
@@ -143,7 +137,7 @@ function Namer(props) {
         </Col>
       </Row>
     </Grid>
-  );
+  )
 }
 
 function Adder(props) {
@@ -157,7 +151,7 @@ function Adder(props) {
         </Col>
       </Row>
     </Grid>
-  );
+  )
 }
 
 function overnight(prev) {
@@ -165,13 +159,13 @@ function overnight(prev) {
   prev &&
   prev.data.arrival &&
   prev.data.departure &&
-  prev.data.arrival.slice(0, 2) > prev.data.departure.slice(0, 2));
+  prev.data.arrival.slice(0, 2) > prev.data.departure.slice(0, 2))
 }
 
 function addDays(date, days) {
-  let d = new Date(date);
-  d.setDate(d.getDate() + days);
-  return d.toJSON().slice(0, 10);
+  let d = new Date(date)
+  d.setDate(d.getDate() + days)
+  return d.toJSON().slice(0, 10)
 }
 
 // ========================================
@@ -184,5 +178,5 @@ ReactDOM
       .getElementById(
         'root'
       )
-  );
+  )
 
