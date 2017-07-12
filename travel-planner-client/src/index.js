@@ -40,7 +40,7 @@ class Trip extends React.Component {
       }, this)
     return (
       <div>
-        <Topbar value={this.state.searchCriteria} onSubmit={this.loadTrip} onChange={this.handleSearchChange}/>
+        <Topbar value={this.state.searchCriteria} onSubmit={() => this.loadTrip()} onChange={this.handleSearchChange}/>
         <Namer value={this.state.name} onSubmit={this.saveTrip} onChange={this.handleNameChange}/>
         {nodes}
         <Adder onClick={() => this.insertNode(this.state.nodes.length)}/>
@@ -54,6 +54,7 @@ class Trip extends React.Component {
   handleNameChange = (e) => {
     this.setState({name: e.target.value})
   }
+
 
   insertNode(i) {
     let insertLoc = i === this.state.nodes.length ? this.state.nodes.length : i + 1
@@ -98,33 +99,47 @@ class Trip extends React.Component {
     this.setState({nodes: newNodes})
   }
 
-  loadTrip = (e) => {
-    $.get("https://travel-planner.io/api/load/" + e.target.value, function (data) {
+  loadTrip() {
+    const handleLoad = (data) => {
       const nodes = []
-      data.destinations.forEach(dest => nodes.push({dest: dest}))
-      this.setState({name: data.name, tripId: data.tripId, nodes: nodes})
+      console.log(data)
+      data.Destinations.forEach(dest => nodes.push({dest: dest}))
+      this.setState({name: data.Name, tripId: data.TripId, nodes: nodes})
+    }
+
+    const name = this.state.searchCriteria
+
+    $.get("https://travel-planner.io/api/load", {name: name}).done(function (data) {
+      handleLoad(JSON.parse(data))
     })
 
   }
 
   saveTrip = (e) => {
+    const handleLoad = (data) => {
+      const nodes = []
+      console.log(data)
+      data.Destinations.forEach(dest => nodes.push({dest: dest}))
+      this.setState({name: data.Name, tripId: data.TripId, nodes: nodes})
+    }
+
     if (e) e.preventDefault()
     const payload = this.state.nodes.map(node => {
       return node.dest
     })
 
-    $.post("https://travel-planner.io/api/save",
-      {
-        trip: {
-          tripId: this.state.tripId,
-          'destinations[]': JSON.stringify(payload)
-        },
-        name: this.state.name
-      })
+    const trip = {
+      tripId: this.state.tripId,
+      destinations: payload,
+      name: this.state.name
+    }
+
+    $.post("https://travel-planner.io/api/save", JSON.stringify(trip))
       .done(function (data) {
-        this.setState({tripId: data.tripId})
+        handleLoad(JSON.parse(data))
       })
   }
+
 
   saveDestination(node, i) {
     const newNodes = this.state.nodes.slice()
