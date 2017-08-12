@@ -16,6 +16,7 @@ export class DestinationFieldSet extends React.Component {
                             onChange={this.props.onChange}
                             edit={this.props.edit}
                             type={this.props.type}
+                            placeholder={this.props.placeholder}
 
           />
         </FormGroup>

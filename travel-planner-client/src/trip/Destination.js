@@ -2,16 +2,15 @@
  * Created by Jeff Joneson on 7/10/2017.
  */
 import React from "react"
-
 import {Button, Col, Glyphicon, Grid, Row} from "react-bootstrap"
 import {DestinationFieldSet} from "./DestinationFieldSet"
+import {addHours, getHoursDifference} from "../common/common"
 
 export class Destination extends React.Component {
   state = {
     dest: this.props.dest,
     edit: this.props.edit
   }
-
 
   handleSubmit = (e) => {
     e.preventDefault()
@@ -24,8 +23,7 @@ export class Destination extends React.Component {
       this.validationStateName(),
       this.validationStateDate(),
       this.validationStateLocationType(),
-      this.validationStateArrival(),
-      this.validationStateDeparture()
+      this.validationStateDuration()
     ]
 
     return !validations.some((result => String(result) !== "success"))
@@ -36,14 +34,34 @@ export class Destination extends React.Component {
     if (prop.length > 0) return 'success'
   }
 
+  checkNumeric(prop) {
+    if (this.checkNull(prop) === 'error') return 'error'
+    if (isNaN(parseFloat(prop)) || !isFinite(prop)) return 'error'
+    return 'success'
+  }
+
   validationStateName = () => this.checkNull(this.state.dest.name)
   validationStateDate = () => this.checkNull(this.state.dest.date)
   validationStateLocationType = () => this.checkNull(this.state.dest.locationType)
+  validationStateDuration = () => this.checkNumeric(this.state.dest.duration)
   validationStateArrival = () => this.checkNull(this.state.dest.arrival)
   validationStateDeparture = () => this.checkNull(this.state.dest.departure)
 
   handleChange = (e) => {
     const newData = this.state.dest
+
+    if (e.target.name === "duration" && !isNaN(parseFloat(e.target.value))) {
+      newData["departure"] = addHours(newData.arrival, e.target.value)
+    }
+
+    if (e.target.name === "departure") {
+      newData["duration"] = getHoursDifference(newData.arrival, e.target.value)
+    }
+
+    if (e.target.name === "arrival") {
+      newData["duration"] = getHoursDifference(e.target.value, newData.departure)
+    }
+
     newData[e.target.name] = e.target.value
     this.setState({dest: newData})
   }
@@ -93,27 +111,34 @@ export class Destination extends React.Component {
       return (
         <div>
           <Row>
-            <DestinationFieldSet label="Name:" width={6} value={this.state.dest.name}
+            <DestinationFieldSet label="Name:" width={7} value={this.state.dest.name}
                                  name="name" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateName()}/>
-            <DestinationFieldSet label="Date:" width={6} value={this.state.dest.date}
+            <DestinationFieldSet label="Date:" width={5} value={this.state.dest.date}
                                  name="date" type="date" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateDate()}/>
           </Row>
           <Row>
-            <DestinationFieldSet label="Location Type:" width={6} value={this.state.dest.locationType}
-                                 name="locationType" select={true}
-                                 options={["City", "Restaurant"]}
-                                 edit={this.state.edit} onChange={this.handleChange}
-                                 validationState={this.validationStateLocationType()}/>
-            <DestinationFieldSet label="Arrival:" width={3} value={this.state.dest.arrival}
-                                 name="arrival" type="time" edit={this.state.edit} onChange={this.handleChange}
+            {/*<DestinationFieldSet label="Location Type:" width={6} value={this.state.dest.locationType}*/}
+            {/*name="locationType" select={true}*/}
+            {/*options={["City", "Restaurant"]}*/}
+            {/*edit={this.state.edit} onChange={this.handleChange}*/}
+            {/*validationState={this.validationStateLocationType()}/>*/}
+            <DestinationFieldSet label="Arrival:" width={5} value={this.state.dest.arrival}
+                                 name="arrival" type="datetime-local" edit={this.state.edit}
+                                 onChange={this.handleChange}
                                  validationState={this.validationStateArrival()}/>
-            <DestinationFieldSet label="Departure:" width={3} value={this.state.dest.departure}
-                                 name="departure" type="time" edit={this.state.edit} onChange={this.handleChange}
+            <DestinationFieldSet label="Hours:" width={2} value={this.state.dest.duration}
+                                 name="duration" type="text" edit={this.state.edit} onChange={this.handleChange}
+                                 validationState={this.validationStateDuration()}/>
+            <DestinationFieldSet label="Departure:" width={5} value={this.state.dest.departure}
+                                 name="departure" type="datetime-local" edit={this.state.edit}
+                                 onChange={this.handleChange}
                                  validationState={this.validationStateDeparture()}/>
             <DestinationFieldSet label="Url:" width={12} value={this.state.dest.url}
                                  name="url" type="text" edit={this.state.edit} onChange={this.handleChange}/>
+            <DestinationFieldSet label="Info:" width={12} value={this.state.dest.data}
+                                 name="info" type="textarea" edit={this.state.edit} onChange={this.handleChange}/>
           </Row>
         </div>
       )

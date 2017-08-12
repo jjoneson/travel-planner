@@ -1,6 +1,7 @@
 package main
 
 import (
+	"aurora"
 	"encoding/json"
 	"fmt"
 	"github.com/julienschmidt/httprouter"
@@ -9,12 +10,41 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type Trip struct {
 	Name         string
 	TripId       string
 	Destinations interface{}
+}
+
+func GetMap(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	fmt.Fprint(w, aurora.CreateMap())
+}
+
+func GetKnownAuroraOdds(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	knownPlace := r.URL.Query().Get("place")
+
+	for _, place := range aurora.Places {
+		if place.Place == knownPlace {
+			fmt.Fprint(w, aurora.GetSavedAuroraOdds(place.Place))
+			return
+		}
+	}
+
+	fmt.Fprint(w, "Not a tracked place")
+}
+
+func GetCurrentAuroraOdds(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 32)
+	long, _ := strconv.ParseFloat(r.URL.Query().Get("longitude"), 32)
+
+	l := aurora.GetAuroraOdds()
+
+	odds := aurora.GetLatLong(float32(lat), float32(long), l)
+
+	fmt.Fprint(w, odds)
 }
 
 func Save(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -47,6 +77,7 @@ func Load(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		fmt.Fprint(w, err)
 		return
 	}
+
 	defer session.Close()
 
 	c := session.DB("travel-planner").C("trips")
@@ -70,5 +101,8 @@ func main() {
 	router := httprouter.New()
 	router.GET("/load", Load)
 	router.POST("/save", Save)
-	log.Fatal(http.ListenAndServe("localhost:997", router))
+	router.GET("/getCurrentAuroraOdds", GetCurrentAuroraOdds)
+	router.GET("/getKnownAuroraOdds", GetKnownAuroraOdds)
+	router.GET("/getMap", GetMap)
+	log.Fatal(http.ListenAndServe("localhost:42229", router))
 }

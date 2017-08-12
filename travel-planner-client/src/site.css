@@ -28,3 +28,32 @@
     width: auto;
     padding: 0;
 }
+
+.odds-map {
+    position: relative;
+    z-index: 1;
+}
+
+.odds-map td {
+    text-align: center;
+    width: 10%;
+}
+
+.odds-map::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .3;
+    z-index: -1;
+    background: url('map.png') no-repeat;
+    background-size: 100% 100%;
+}
+
+textarea {
+    resize: vertical;
+    max-height: 300px;
+    min-height: 50px;
+}

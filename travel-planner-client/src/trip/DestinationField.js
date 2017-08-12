@@ -22,8 +22,16 @@ export class DestinationField extends React.Component {
       )
     }
 
+    if (this.props.type == "textarea") {
+      return (
+        <FormControl componentClass="textarea" name={this.props.name} type={this.props.type} value={this.props.value}
+                     onChange={this.props.onChange}/>
+      )
+    }
+
     return (
-      <FormControl name={this.props.name} type={this.props.type} value={this.props.value}
+      <FormControl placeholder={this.props.placeholder} name={this.props.name} type={this.props.type}
+                   value={this.props.value}
                    onChange={this.props.onChange}/>
     )
   }
