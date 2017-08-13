@@ -1,12 +1,15 @@
 /**
+ * Created by rafnu on 8/13/2017.
+ */
+/**
  * Created by Jeff Joneson on 7/10/2017.
  */
 import React from "react"
-import {Button, Col, Glyphicon, Grid, Row} from "react-bootstrap"
+import {Button, Col, Grid, Row} from "react-bootstrap"
 import {DestinationFieldSet} from "./DestinationFieldSet"
 import {addHours, getHoursDifference} from "../common/common"
 
-export class Destination extends React.Component {
+export class GroundTransport extends React.Component {
   state = {
     dest: this.props.dest,
     edit: this.props.edit,
@@ -20,9 +23,8 @@ export class Destination extends React.Component {
 
   valid = () => {
     const validations = [
-      this.validationStateName(),
-      this.validationStateDate(),
-      this.validationStateDuration()
+      this.validationStateDuration(),
+      this.validationStateName()
     ]
 
     return !validations.some((result => String(result) !== "success"))
@@ -40,7 +42,6 @@ export class Destination extends React.Component {
   }
 
   validationStateName = () => this.checkNull(this.state.dest.name)
-  validationStateDate = () => this.checkNull(this.state.dest.date)
   validationStateDuration = () => this.checkNumeric(this.state.dest.duration)
   validationStateArrival = () => this.checkNull(this.state.dest.arrival)
   validationStateDeparture = () => this.checkNull(this.state.dest.departure)
@@ -109,22 +110,17 @@ export class Destination extends React.Component {
       return (
         <div>
           <Row>
-            <DestinationFieldSet label="Name:" width={7} value={this.state.dest.name}
+            <DestinationFieldSet label="Name:" width={3} value={this.state.dest.name}
                                  name="name" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateName()}/>
-            <DestinationFieldSet label="Date:" width={5} value={this.state.dest.date}
-                                 name="date" type="date" edit={this.state.edit} onChange={this.handleChange}
-                                 validationState={this.validationStateDate()}/>
-          </Row>
-          <Row>
-            <DestinationFieldSet label="Arrival:" width={5} value={this.state.dest.arrival}
+            <DestinationFieldSet label="Departure:" width={4} value={this.state.dest.arrival}
                                  name="arrival" type="datetime-local" edit={this.state.edit}
                                  onChange={this.handleChange}
                                  validationState={this.validationStateArrival()}/>
-            <DestinationFieldSet label="Hours:" width={2} value={this.state.dest.duration}
+            <DestinationFieldSet label="Hours:" width={1} value={this.state.dest.duration}
                                  name="duration" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateDuration()}/>
-            <DestinationFieldSet label="Departure:" width={5} value={this.state.dest.departure}
+            <DestinationFieldSet label="Arrival:" width={4} value={this.state.dest.departure}
                                  name="departure" type="datetime-local" edit={this.state.edit}
                                  onChange={this.handleChange}
                                  validationState={this.validationStateDeparture()}/>
@@ -147,15 +143,26 @@ export class Destination extends React.Component {
     )
 
     return (
-      <Grid className={"node node-read"}>
-        <Button bsSize="xsmall" onClick={() => this.props.move(global.UP, this.props.index)}>
-          <Glyphicon glyph="arrow-up"/>
-        </Button>
-        <Button bsSize="xsmall" onClick={() => this.props.move(global.DOWN, this.props.index)}>
-          <Glyphicon glyph="arrow-down"/>
-        </Button>
-        {content()}
-        {buttons()}
+      <Grid>
+        <Row>
+          <Col sm={4} smPush={4} className={"node node-read travel-read"}>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <label>{this.state.dest.name}</label>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <span>{this.state.dest.arrival.substring(11)} - {this.state.dest.departure.substring(11)}</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={8} smPush={2}>
+                <Button block bsStyle="primary" onClick={() => this.setState({edit: true})}>Edit</Button>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
       </Grid>
     )
   }

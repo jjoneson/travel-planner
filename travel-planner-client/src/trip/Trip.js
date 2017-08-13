@@ -6,6 +6,9 @@ import "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import {Button, Col, ControlLabel, FormControl, FormGroup, Grid, Navbar, Row} from "react-bootstrap"
 import {Destination} from "./Destination"
 import {addHours, getDate, today} from "../common/common"
+import {Adder} from "./Adder"
+import {Flight} from "./Flight"
+import {GroundTransport} from "./GroundTransport"
 window.jQuery = $
 window.$ = $
 global.jQuery = $
@@ -27,17 +30,47 @@ export default class Trip extends React.Component {
         const prev = this.state.nodes[i - 1]
         node.dest.arrival = prev && prev.dest.departure ? prev.dest.departure : node.dest.arrival
         node.dest.date = prev && prev.dest.date ? getDate(prev.dest.departure) : getDate(node.dest.date)
-        return <div key={i}>
-          <Destination
-            dest={node.dest}
-            edit={node.edit}
-            save={(data, i) => this.saveDestination(data, i)}
-            move={(direction, i) => this.moveNode(direction, i)}
-            insertNode={(i) => this.insertNode(i)}
-            delete={this.deleteDestination.bind(this, i)}
-            index={i}
-          />
-        </div>
+
+        if (node.dest.nodeType === "Flight") {
+          return <div key={i}>
+            <Flight
+              dest={node.dest}
+              edit={node.edit}
+              save={(data, i) => this.saveDestination(data, i)}
+              move={(direction, i) => this.moveNode(direction, i)}
+              insertNode={(i) => this.insertNode(i)}
+              delete={this.deleteDestination.bind(this, i)}
+              index={i}
+            />
+          </div>
+        }
+        else if (node.dest.nodeType === "Ground Transport") {
+          return <div key={i}>
+            <GroundTransport
+              dest={node.dest}
+              edit={node.edit}
+              save={(data, i) => this.saveDestination(data, i)}
+              move={(direction, i) => this.moveNode(direction, i)}
+              insertNode={(i) => this.insertNode(i)}
+              delete={this.deleteDestination.bind(this, i)}
+              index={i}
+            />
+          </div>
+        }
+        else {
+          return <div key={i}>
+            <Destination
+              dest={node.dest}
+              edit={node.edit}
+              save={(data, i) => this.saveDestination(data, i)}
+              move={(direction, i) => this.moveNode(direction, i)}
+              insertNode={(i) => this.insertNode(i)}
+              delete={this.deleteDestination.bind(this, i)}
+              index={i}
+            />
+          </div>
+        }
+
       }, this)
     return (
       <div>
@@ -45,7 +78,7 @@ export default class Trip extends React.Component {
         <Namer named={this.state.named} value={this.state.name} onSubmit={this.saveTrip}
                onChange={this.handleNameChange}/>
         {nodes}
-        <Adder onClick={() => this.insertNode(this.state.nodes.length)}/>
+        <Adder nodeType="Destination" addNode={(nodeType) => this.addNode(nodeType, this.state.nodes.length)}/>
       </div>
     )
   }
@@ -62,8 +95,11 @@ export default class Trip extends React.Component {
     this.loadTrip()
   }
 
+  addNode(nodeType, i) {
+    this.insertNode(i, nodeType)
+  }
 
-  insertNode(i) {
+  insertNode(i, nodeType) {
     let insertLoc = i === this.state.nodes.length ? this.state.nodes.length : i + 1
     const newNodes = this.state.nodes.slice()
     const prev = newNodes[i - 1]
@@ -71,9 +107,9 @@ export default class Trip extends React.Component {
       dest: {
         date: prev && prev.dest.departure ? getDate(prev.dest.departure) : getDate(today()),
         arrival: prev && prev.dest.departure ? prev.dest.departure : today(),
-        locationType: "City",
         departure: prev && prev.dest.departure ? addHours(prev.dest.departure, 1) : addHours(today(), 1),
-        duration: 1
+        duration: 1,
+        nodeType: nodeType,
       },
       edit: true
     })
@@ -196,20 +232,6 @@ function Namer(props) {
               Name Trip
             </Button>
           </form>
-        </Col>
-      </Row>
-    </Grid>
-  )
-}
-
-function Adder(props) {
-  return (
-    <Grid>
-      <Row>
-        <Col sm={2} smPush={5} className="node node-read">
-          <Button bsStyle="default" block onClick={props.onClick}>
-            Add Dest
-          </Button>
         </Col>
       </Row>
     </Grid>

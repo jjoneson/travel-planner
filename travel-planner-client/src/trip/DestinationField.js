@@ -4,6 +4,11 @@ import {FormControl} from "react-bootstrap"
 export class DestinationField extends React.Component {
   render() {
     if (!this.props.edit) {
+      if (this.props.type === "datetime-local") {
+        return (
+          <p>{this.props.value.substring(11)} &emsp; {this.props.value.substring(0, 10)}</p>
+        )
+      }
       return (
         <p>{this.props.value}</p>
       )
@@ -22,7 +27,7 @@ export class DestinationField extends React.Component {
       )
     }
 
-    if (this.props.type == "textarea") {
+    if (this.props.type === "textarea") {
       return (
         <FormControl componentClass="textarea" name={this.props.name} type={this.props.type} value={this.props.value}
                      onChange={this.props.onChange}/>
