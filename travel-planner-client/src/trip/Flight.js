@@ -110,14 +110,14 @@ export class Flight extends React.Component {
       return (
         <div>
           <Row>
-            <DestinationFieldSet label="Flight Number:" width={3} value={this.state.dest.flightNumber}
+            <DestinationFieldSet label="Flight:" width={2} value={this.state.dest.flightNumber}
                                  name="flightNumber" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateFlightNumber()}/>
             <DestinationFieldSet label="Departure:" width={4} value={this.state.dest.arrival}
                                  name="arrival" type="datetime-local" edit={this.state.edit}
                                  onChange={this.handleChange}
                                  validationState={this.validationStateArrival()}/>
-            <DestinationFieldSet label="Hours:" width={1} value={this.state.dest.duration}
+            <DestinationFieldSet label="Hours:" width={2} value={this.state.dest.duration}
                                  name="duration" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateDuration()}/>
             <DestinationFieldSet label="Arrival:" width={4} value={this.state.dest.departure}
@@ -148,7 +148,7 @@ export class Flight extends React.Component {
           <Col sm={4} smPush={4} className={"node node-read travel-read"}>
             <Row>
               <Col sm={12} className={"travel-info"}>
-                <label>Flight Number: </label>
+                <label>Flight Number:&nbsp;</label>
                 <span>{this.state.dest.flightNumber}</span>
               </Col>
             </Row>

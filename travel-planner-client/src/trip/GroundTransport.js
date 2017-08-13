@@ -110,14 +110,14 @@ export class GroundTransport extends React.Component {
       return (
         <div>
           <Row>
-            <DestinationFieldSet label="Name:" width={3} value={this.state.dest.name}
+            <DestinationFieldSet label="Name:" width={2} value={this.state.dest.name}
                                  name="name" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateName()}/>
             <DestinationFieldSet label="Departure:" width={4} value={this.state.dest.arrival}
                                  name="arrival" type="datetime-local" edit={this.state.edit}
                                  onChange={this.handleChange}
                                  validationState={this.validationStateArrival()}/>
-            <DestinationFieldSet label="Hours:" width={1} value={this.state.dest.duration}
+            <DestinationFieldSet label="Hours:" width={2} value={this.state.dest.duration}
                                  name="duration" type="text" edit={this.state.edit} onChange={this.handleChange}
                                  validationState={this.validationStateDuration()}/>
             <DestinationFieldSet label="Arrival:" width={4} value={this.state.dest.departure}

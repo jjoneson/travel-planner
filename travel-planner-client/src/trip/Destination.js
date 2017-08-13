@@ -50,6 +50,9 @@ export class Destination extends React.Component {
 
     if (e.target.name === "duration" && !isNaN(parseFloat(e.target.value))) {
       newData["departure"] = addHours(newData.arrival, e.target.value)
+      newData["duration"] = parseFloat(e.target.value)
+      this.setState({dest: newData})
+      return
     }
 
     if (e.target.name === "departure") {

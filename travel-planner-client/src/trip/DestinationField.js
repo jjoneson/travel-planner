@@ -9,6 +9,15 @@ export class DestinationField extends React.Component {
           <p>{this.props.value.substring(11)} &emsp; {this.props.value.substring(0, 10)}</p>
         )
       }
+      if (this.props.name === "duration") {
+        let val = this.props.value
+        if (typeof this.props.name === "string") {
+          val = parseFloat(val)
+        }
+        return (
+          <p>{val.toFixed(2)}</p>
+        )
+      }
       return (
         <p>{this.props.value}</p>
       )
