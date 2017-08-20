@@ -126,7 +126,7 @@ export class Flight extends React.Component {
                                  validationState={this.validationStateDeparture()}/>
             <DestinationFieldSet label="Url:" width={12} value={this.state.dest.url}
                                  name="url" type="text" edit={this.state.edit} onChange={this.handleChange}/>
-            <DestinationFieldSet label="Info:" width={12} value={this.state.dest.data}
+            <DestinationFieldSet label="Info:" width={12} value={this.state.dest.info}
                                  name="info" type="textarea" edit={this.state.edit} onChange={this.handleChange}/>
           </Row>
         </div>

@@ -5,7 +5,7 @@ import $ from "jquery"
 import "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import {Button, Col, ControlLabel, FormControl, FormGroup, Grid, Navbar, Row} from "react-bootstrap"
 import {Destination} from "./Destination"
-import {addHours, getDate, today} from "../common/common"
+import {addHours, getDate, getHoursDifference, today} from "../common/common"
 import {Adder} from "./Adder"
 import {Flight} from "./Flight"
 import {GroundTransport} from "./GroundTransport"
@@ -30,7 +30,7 @@ export default class Trip extends React.Component {
         const prev = this.state.nodes[i - 1]
         node.dest.arrival = prev && prev.dest.departure ? prev.dest.departure : node.dest.arrival
         node.dest.date = prev && prev.dest.date ? getDate(prev.dest.departure) : getDate(node.dest.date)
-
+        node.dest.duration = getHoursDifference(node.dest.arrival, node.dest.departure)
         if (node.dest.nodeType === "Flight") {
           return <div key={i}>
             <Flight
