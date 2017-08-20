@@ -18,6 +18,12 @@ export class DestinationField extends React.Component {
           <p>{val.toFixed(2)}</p>
         )
       }
+      if (this.props.name === "url") {
+        return (
+          <a href={this.props.value} target="_blank">External Url</a>
+        )
+      }
+
       return (
         <p>{this.props.value}</p>
       )

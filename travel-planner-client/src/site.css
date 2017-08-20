@@ -61,6 +61,26 @@
     background-size: 100% 100%;
 }
 
+.icon-btn-left {
+    float: left;
+}
+
+.icon-btn-right {
+    float: right;
+}
+
+.destination-read {
+    max-width: 300px;
+}
+
+.travel-read {
+    max-width: 300px;
+}
+
+.destination-content {
+    margin-bottom: -20px;
+}
+
 textarea {
     resize: vertical;
     max-height: 300px;

@@ -5,7 +5,7 @@
  * Created by Jeff Joneson on 7/10/2017.
  */
 import React from "react"
-import {Button, Col, Grid, Row} from "react-bootstrap"
+import {Button, Col, Glyphicon, Grid, Row} from "react-bootstrap"
 import {DestinationFieldSet} from "./DestinationFieldSet"
 import {addHours, getHoursDifference} from "../common/common"
 
@@ -143,9 +143,9 @@ export class GroundTransport extends React.Component {
     )
 
     return (
-      <Grid>
-        <Row>
-          <Col sm={4} smPush={4} className={"node node-read travel-read"}>
+      <Grid className={"node node-read travel-read"}>
+        <Row className="destination-content">
+          <Col sm={8} smPush={2}>
             <Row>
               <Col sm={12} className={"travel-info"}>
                 <label>{this.state.dest.name}</label>
@@ -157,12 +157,23 @@ export class GroundTransport extends React.Component {
               </Col>
             </Row>
             <Row>
-              <Col sm={8} smPush={2}>
-                <Button block bsStyle="primary" onClick={() => this.setState({edit: true})}>Edit</Button>
+              <Col sm={12} className={"travel-info"}>
+                <a href={this.state.dest.url} target="_blank">Info</a>
               </Col>
             </Row>
           </Col>
         </Row>
+        <Button className={"icon-btn-left"} bsSize="xsmall"
+                onClick={() => this.props.move(global.UP, this.props.index)}>
+          <Glyphicon glyph="arrow-up"/>
+        </Button>
+        <Button className={"icon-btn-left"} bsSize="xsmall"
+                onClick={() => this.props.move(global.DOWN, this.props.index)}>
+          <Glyphicon glyph="arrow-down"/>
+        </Button>
+        <Button className={"icon-btn-right"} bsSize="xsmall" onClick={() => this.setState({edit: true})}>
+          <Glyphicon glyph="pencil"/>
+        </Button>
       </Grid>
     )
   }

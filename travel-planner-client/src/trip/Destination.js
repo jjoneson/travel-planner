@@ -149,16 +149,62 @@ export class Destination extends React.Component {
       </Grid>
     )
 
+    let duration = this.state.dest.duration
+    if (typeof duration === "string") {
+      duration = parseFloat(duration)
+    }
+
     return (
-      <Grid className={"node node-read"}>
-        <Button bsSize="xsmall" onClick={() => this.props.move(global.UP, this.props.index)}>
+      <Grid className={"node node-read destination-read"}>
+        <Row className={"destination-content"}>
+          <Col sm={8} smPush={2}>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <label>{this.state.dest.name}</label>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <label>Hours:&nbsp;</label>
+                <span>{duration.toFixed(2)}</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <span>{this.state.dest.arrival.substring(5, 10)}: {this.state.dest.arrival.substring(11)}</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <span>{this.state.dest.departure.substring(5, 10)}: {this.state.dest.departure.substring(11)}</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <span>{this.state.dest.info}</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm={12} className={"travel-info"}>
+                <a href={this.state.dest.url} target="_blank">Info</a>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+        <Button className={"icon-btn-left"} bsSize="xsmall"
+                onClick={() => this.props.move(global.UP, this.props.index)}>
           <Glyphicon glyph="arrow-up"/>
         </Button>
-        <Button bsSize="xsmall" onClick={() => this.props.move(global.DOWN, this.props.index)}>
+        <Button className={"icon-btn-left"} bsSize="xsmall"
+                onClick={() => this.props.move(global.DOWN, this.props.index)}>
           <Glyphicon glyph="arrow-down"/>
         </Button>
-        {content()}
-        {buttons()}
+        <Button className={"icon-btn-right"} bsSize="xsmall" onClick={() => this.setState({edit: true})}>
+          <Glyphicon glyph="pencil"/>
+        </Button>
+        <Button className={"icon-btn-right"} bsSize="xsmall" onClick={() => this.props.insertNode(this.props.index)}>
+          <Glyphicon glyph="plus"/>
+        </Button>
       </Grid>
     )
   }

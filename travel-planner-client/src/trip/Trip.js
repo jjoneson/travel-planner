@@ -133,8 +133,6 @@ export default class Trip extends React.Component {
     [newNodes[i], newNodes[j]] = [newNodes[j], newNodes[i]];
     [newNodes[i].dest.arrival, newNodes[j].dest.arrival] = [newNodes[j].dest.arrival, newNodes[i].dest.arrival];
     [newNodes[i].dest.departure, newNodes[j].dest.departure] = [newNodes[j].dest.departure, newNodes[i].dest.departure]
-    newNodes[i].dest.departure = addHours(newNodes[i].dest.arrival, newNodes[i].dest.duration)
-    newNodes[j].dest.departure = addHours(newNodes[j].dest.arrival, newNodes[j].dest.duration)
     this.setState({nodes: newNodes})
   }
 
@@ -228,7 +226,7 @@ function Namer(props) {
               <ControlLabel>Trip Name</ControlLabel>
               <FormControl value={props.value} onChange={props.onChange} type="text" placeholder="Trip name"/>
             </FormGroup>
-            <Button type="submit" bsStyle="default" block>
+            <Button type="submit" bsStyle="default" block onClick>
               Name Trip
             </Button>
           </form>

@@ -55,7 +55,7 @@ export class Adder extends React.Component {
       <Grid>
         <Row>
           <Col sm={4} smPush={4} className="node node-read">
-            <DestinationFieldSet onChange={this.handleChange} label="Type:" width={12} value={this.state.nodeType}
+            <DestinationFieldSet onChange={this.handleChange} label="" width={12} value={this.state.nodeType}
                                  name="locationType" select={true}
                                  options={["Destination", "Flight", "Ground Transport"]}
                                  edit={true}/>
